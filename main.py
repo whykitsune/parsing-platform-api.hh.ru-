@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 import requests
-from pydantic import BaseModel
 import json
 import time
 import re
+from src.models import VacanciesTable
+from src.database import session_factory
+from src.query import create_tables
 
 app = FastAPI()
 
@@ -14,6 +16,7 @@ def get_vacancies(
         city: str = None,
         salary: int = None
 ):
+    create_tables()
     url_areas = 'https://api.hh.ru/areas'
     res = requests.get(url_areas)
     res.raise_for_status()
@@ -94,13 +97,34 @@ def get_vacancies(
         if key_skills:
             for i in range(len(key_skills)):
                 vac_skills.append(key_skills[i]['name'])
-        out_vacancy['key_skills'] = vac_skills
+        vac_skills_str = ''
+        for cur_skill in vac_skills:
+            vac_skills_str += f'{cur_skill} '
+        out_vacancy['key_skills'] = vac_skills_str
         description = response_vacancy['description']
         pattern = re.compile('<.*?>')
         description = re.sub(pattern, '', description)
         out_vacancy['description'] = description
         out_vacancy['url'] = response_vacancy['alternate_url']
         out_vacancies.append(out_vacancy)
+
+    with session_factory() as session:
+        for cur_vacancy in out_vacancies:
+            print(cur_vacancy)
+            vacancy_to_table = VacanciesTable(
+                name=cur_vacancy['name'],
+                salary=cur_vacancy['salary'],
+                employer=cur_vacancy['employer'],
+                experience=cur_vacancy['experience'],
+                employment=cur_vacancy['employment'],
+                area=cur_vacancy['area'],
+                key_skills=cur_vacancy['key_skills'],
+                description=cur_vacancy['description'],
+                url=cur_vacancy['url']
+            )
+
+            session.add(vacancy_to_table)
+            session.commit()
 
     return {'ok': True, 'response': out_vacancies}
 

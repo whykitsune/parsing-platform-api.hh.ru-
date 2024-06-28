@@ -11,3 +11,8 @@ dist/
 .coverage
 *.py,cover
 .cache/
+
+*.log
+pgdata/
+pgdump/
+*.sql
