@@ -6,6 +6,15 @@ import re
 from src.models import VacanciesTable
 from src.database import session_factory
 from src.query import create_tables
+from pydantic import BaseModel
+from typing import Optional
+
+
+class InputParams(BaseModel):
+    vacancy: str
+    city: str
+    salary: Optional[int]
+
 
 app = FastAPI()
 
@@ -133,12 +142,8 @@ def get_vacancies(
 
 
 @app.post('/get_vacancies')
-def get_vacancies_from_db(
-        vacancy: str = '',
-        city: str = 'Россия',
-        salary: str = None
-):
-    get_vacancies(vacancy, city, salary)
+def get_vacancies_from_db(input_params: InputParams):
+    get_vacancies(input_params.vacancy, input_params.city, input_params.salary)
     with session_factory() as session:
         vacancies = session.query(VacanciesTable).all()
         out_vacancies = []
