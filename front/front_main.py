@@ -1,3 +1,4 @@
+import requests
 from fastapi import FastAPI, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -18,7 +19,17 @@ def home(request: Request):
 def vacancies(
         request: Request,
         name: str = Form(default=''),
-        city: str = Form(default=None),
-        salary: int = Form(default=None)
+        city: str = Form(default='Россия'),
+        salary: str = Form(default=None)
 ):
-    return templates.TemplateResponse('vacancies.html', {'request': request, 'name': name, 'city': city, 'salary': salary})
+    params = {
+        'vacancy': name,
+        'city': city,
+        'salary': salary
+    }
+    parsed_vacancies = requests.post('http://127.0.0.1:9000/get_vacancies', json=params)
+    parsed_vacancies = parsed_vacancies.json()
+    print(parsed_vacancies)
+    parsed_vacancies = parsed_vacancies['vacancies']
+
+    return templates.TemplateResponse('vacancies.html', {'request': request, 'parsed_vacancies': parsed_vacancies})

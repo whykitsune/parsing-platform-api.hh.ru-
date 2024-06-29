@@ -1,15 +1,73 @@
 body{
-    background-color: #091f5d;
+    background: rgb(9, 31, 93);
+    background: linear-gradient(315deg, rgb(17 50 143) 5%, rgba(3, 17, 56, 1) 100%);
     margin:0;
     height: 100vh;
     font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
 }
-p{
-    margin:0;
-}
+
 button{
-    width: 20%;
-    height: 5vh;
+    width: 8vh;
+    height: 8vh;
     border-radius: 35px;
-    position: relative;
+    margin-left: 2vh;
+    margin-top: 2vh;
+}
+label{
+    color: white;
+}
+.list{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+}
+.card{
+    background-color: #ffffffe3;
+    width: 90vw;
+    margin: 2vw 5vw;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border-radius: 25px;
+    gap: 10px;
+    padding: 15px;
+}
+.header{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 4vh;
+    font-size: 30px;
+
+}
+.hd{
+    margin: 0 3vw;
+    text-decoration: none;
+    color: #000000;
+}
+.char{
+    width: auto;
+    display: flex;
+    flex-direction: column;
+}
+.double_chars{
+    display: flex;
+    justify-content: space-between;
+    width: auto;
+    font-size: 25px;
+    margin-left: 3vw;
+    gap: 4vw;
+}
+
+.name:hover{
+    text-decoration: underline;
+    transition: .1s;
+}
+.skills{
+    font-size: 20px;
+    margin-left: 3vw;
 }

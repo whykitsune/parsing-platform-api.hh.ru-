@@ -13,15 +13,15 @@ app = FastAPI()
 # @app.get('/get_vacancy')
 def get_vacancies(
         vacancy: str = '',
-        city: str = None,
-        salary: int = None
+        city: str = 'Россия',
+        salary: str = None
 ):
     create_tables()
     url_areas = 'https://api.hh.ru/areas'
     res = requests.get(url_areas)
     res.raise_for_status()
     res = json.loads(res.text)
-    areas = {}
+    areas = {'Россия': 113}
     if city:
         for area in res[0]['areas']:
             areas[area['name']] = area['id']
@@ -30,14 +30,14 @@ def get_vacancies(
                 for cur_city in cur_area:
                     areas[cur_city['name']] = cur_city['id']
         for key, value in areas.items():
-            if city.lower() == key.lower():
+            if str(city).lower() == key.lower():
                 city = areas[key]
 
     url = 'https://api.hh.ru/vacancies'
     params = {
         'text': f'{vacancy}',
         'area': city,
-        'salary': str(salary),
+        'salary': salary,
         'per_page': 100
     }
     response = requests.get(url, params=params)
@@ -48,7 +48,7 @@ def get_vacancies(
         params = {
             'text': f'{vacancy}',
             'area': city,
-            'salary': str(salary),
+            'salary': salary,
             'per_page': 100,
             'page': page
         }
@@ -59,6 +59,7 @@ def get_vacancies(
         vacancies += response['items']
         time.sleep(1)
     out_vacancies = []
+    c=0
     for item in vacancies:
         out_vacancy = {}
         item_id = item['id']
@@ -107,6 +108,9 @@ def get_vacancies(
         out_vacancy['description'] = description
         out_vacancy['url'] = response_vacancy['alternate_url']
         out_vacancies.append(out_vacancy)
+        c += 1
+        if c == 10:
+            break
 
     with session_factory() as session:
         for cur_vacancy in out_vacancies:
@@ -128,7 +132,13 @@ def get_vacancies(
     return {'ok': True, 'response': out_vacancies}
 
 
-def get_vacancies_from_db():
+@app.post('/get_vacancies')
+def get_vacancies_from_db(
+        vacancy: str = '',
+        city: str = 'Россия',
+        salary: str = None
+):
+    get_vacancies(vacancy, city, salary)
     with session_factory() as session:
         vacancies = session.query(VacanciesTable).all()
         out_vacancies = []
@@ -148,5 +158,5 @@ def get_vacancies_from_db():
         return {'vacancies': out_vacancies}
 
 
-# print(get_vacancies('разработчик', 'Оренбург', salary=500000))
-print(get_vacancies_from_db())
+# print(get_vacancies(city='Кострома'))
+# print(get_vacancies_from_db())
