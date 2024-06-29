@@ -110,7 +110,6 @@ def get_vacancies(
 
     with session_factory() as session:
         for cur_vacancy in out_vacancies:
-            print(cur_vacancy)
             vacancy_to_table = VacanciesTable(
                 name=cur_vacancy['name'],
                 salary=cur_vacancy['salary'],
@@ -129,4 +128,25 @@ def get_vacancies(
     return {'ok': True, 'response': out_vacancies}
 
 
-print(get_vacancies('разработчик', 'Оренбург', salary=500000))
+def get_vacancies_from_db():
+    with session_factory() as session:
+        vacancies = session.query(VacanciesTable).all()
+        out_vacancies = []
+        for vacancy in vacancies:
+            vacancy_dict = dict()
+            vacancy_dict['name'] = vacancy.name
+            vacancy_dict['salary'] = vacancy.salary
+            vacancy_dict['employer'] = vacancy.employer
+            vacancy_dict['experience'] = vacancy.experience
+            vacancy_dict['employment'] = vacancy.employment
+            vacancy_dict['area'] = vacancy.area
+            vacancy_dict['key_skills'] = vacancy.key_skills
+            vacancy_dict['description'] = vacancy.description
+            vacancy_dict['url'] = vacancy.url
+            out_vacancies.append(vacancy_dict)
+
+        return {'vacancies': out_vacancies}
+
+
+# print(get_vacancies('разработчик', 'Оренбург', salary=500000))
+print(get_vacancies_from_db())
