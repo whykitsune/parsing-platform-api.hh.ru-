@@ -1,0 +1,15 @@
+body{
+    background-color: #091f5d;
+    margin:0;
+    height: 100vh;
+    font-family: sans-serif;
+}
+p{
+    margin:0;
+}
+button{
+    width: 20%;
+    height: 5vh;
+    border-radius: 35px;
+    position: relative;
+}
