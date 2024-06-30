@@ -71,3 +71,16 @@ label{
     font-size: 20px;
     margin-left: 3vw;
 }
+.page{
+    width: 6vh;
+    height: 5vh;
+    font-weight: 500;
+    font-size: 25px;
+    border-radius: 35px;
+}
+.pages{
+    display: flex;
+    justify-content: center;
+    gap: 10%;
+    padding-bottom: 2vh;
+}

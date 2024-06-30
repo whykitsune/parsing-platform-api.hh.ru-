@@ -118,7 +118,7 @@ def get_vacancies(
         out_vacancy['url'] = response_vacancy['alternate_url']
         out_vacancies.append(out_vacancy)
         c += 1
-        if c == 10:
+        if c == 30:
             break
 
     with session_factory() as session:
@@ -161,6 +161,8 @@ def get_vacancies_from_db(input_params: InputParams):
             out_vacancies.append(vacancy_dict)
 
         return {'vacancies': out_vacancies}
+
+# @app.post()
 
 
 # print(get_vacancies(city='Кострома'))
