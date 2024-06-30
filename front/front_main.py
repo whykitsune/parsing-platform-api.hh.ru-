@@ -38,8 +38,9 @@ def vacancies(
     global count_of_pages, cur_page, vacancies_all
 
     if path == 'base':
-        parsed_vacancies = requests.post('http://127.0.0.1:9000/get_vacancies', json=params)
+        parsed_vacancies = requests.get('http://127.0.0.1:9000/get_vacancies', params=params)
         parsed_vacancies = parsed_vacancies.json()
+        print(parsed_vacancies)
         parsed_vacancies = parsed_vacancies['vacancies']
         if len(parsed_vacancies) // 20 == 0:
             count_of_pages = len(parsed_vacancies) // 20

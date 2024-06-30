@@ -6,14 +6,6 @@ import re
 from src.models import VacanciesTable
 from src.database import session_factory
 from src.query import create_tables
-from pydantic import BaseModel
-from typing import Optional
-
-
-class InputParams(BaseModel):
-    vacancy: str
-    city: str
-    salary: Optional[int]
 
 
 app = FastAPI()
@@ -100,6 +92,8 @@ def get_vacancies(
         out_vacancy['experience'] = experience['name']
         employment = response_vacancy['employment']
         out_vacancy['employment'] = employment['name']
+        schedule = response_vacancy['schedule']
+        out_vacancy['schedule'] = schedule['name']
         vac_area = response_vacancy['area']
         out_vacancy['area'] = vac_area['name']
         vac_skills = []
@@ -129,6 +123,7 @@ def get_vacancies(
                 employer=cur_vacancy['employer'],
                 experience=cur_vacancy['experience'],
                 employment=cur_vacancy['employment'],
+                schedule=cur_vacancy['schedule'],
                 area=cur_vacancy['area'],
                 key_skills=cur_vacancy['key_skills'],
                 description=cur_vacancy['description'],
@@ -141,9 +136,13 @@ def get_vacancies(
     return {'ok': True, 'response': out_vacancies}
 
 
-@app.post('/get_vacancies')
-def get_vacancies_from_db(input_params: InputParams):
-    get_vacancies(input_params.vacancy, input_params.city, input_params.salary)
+@app.get('/get_vacancies')
+def get_vacancies_from_db(
+        vacancy: str = '',
+        city: str = 'Россия',
+        salary: str = None
+):
+    get_vacancies(vacancy, city, salary)
     with session_factory() as session:
         vacancies = session.query(VacanciesTable).all()
         out_vacancies = []
@@ -154,6 +153,7 @@ def get_vacancies_from_db(input_params: InputParams):
             vacancy_dict['employer'] = vacancy.employer
             vacancy_dict['experience'] = vacancy.experience
             vacancy_dict['employment'] = vacancy.employment
+            vacancy_dict['schedule'] = vacancy.schedule
             vacancy_dict['area'] = vacancy.area
             vacancy_dict['key_skills'] = vacancy.key_skills
             vacancy_dict['description'] = vacancy.description
@@ -163,6 +163,8 @@ def get_vacancies_from_db(input_params: InputParams):
         return {'vacancies': out_vacancies}
 
 # @app.post()
+# def filter_vacancies():
+
 
 
 # print(get_vacancies(city='Кострома'))

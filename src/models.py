@@ -11,6 +11,7 @@ class VacanciesTable(Base):
     employer: Mapped[str]
     experience: Mapped[str]
     employment: Mapped[str]
+    schedule: Mapped[str]
     area: Mapped[str]
     key_skills: Mapped[str]
     description: Mapped[str]
