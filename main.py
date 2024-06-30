@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
+from typing import Union
+from typing_extensions import Annotated
 import requests
 import json
 import time
@@ -162,9 +164,43 @@ def get_vacancies_from_db(
 
         return {'vacancies': out_vacancies}
 
-# @app.post()
-# def filter_vacancies():
 
+@app.get('/filter')
+def filter_vacancies(
+        experience: str = 'Не имеет значения',
+        employment: Annotated[Union[list, None], Query()] = None,
+        schedule: Annotated[Union[list, None], Query()] = None
+):
+    if experience == 'Не имеет значения':
+        experience = ['Не имеет значения', 'Нет опыта', 'От 1 года до 3 лет', 'От 3 до 6 лет', 'Более 6 лет']
+    else:
+        experience = [experience]
+    if not employment:
+        employment = ['Полная занятость', 'Частичная занятость', 'Проектная работа', 'Стажировка', 'Волонтерство']
+    if not schedule:
+        schedule = ['Полный день', 'Удаленная работа', 'Гибкий график', 'Сменный график', 'Вахтовый метод']
+    print(experience, employment, schedule)
+
+    with session_factory() as session:
+        vacancies = session.query(VacanciesTable).filter(VacanciesTable.experience.in_(experience),
+                                                         VacanciesTable.employment.in_(employment),
+                                                         VacanciesTable.schedule.in_(schedule)).all()
+        out_vacancies = []
+        for vacancy in vacancies:
+            vacancy_dict = dict()
+            vacancy_dict['name'] = vacancy.name
+            vacancy_dict['salary'] = vacancy.salary
+            vacancy_dict['employer'] = vacancy.employer
+            vacancy_dict['experience'] = vacancy.experience
+            vacancy_dict['employment'] = vacancy.employment
+            vacancy_dict['schedule'] = vacancy.schedule
+            vacancy_dict['area'] = vacancy.area
+            vacancy_dict['key_skills'] = vacancy.key_skills
+            vacancy_dict['description'] = vacancy.description
+            vacancy_dict['url'] = vacancy.url
+            out_vacancies.append(vacancy_dict)
+
+        return {'vacancies': out_vacancies}
 
 
 # print(get_vacancies(city='Кострома'))

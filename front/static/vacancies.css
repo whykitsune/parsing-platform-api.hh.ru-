@@ -88,3 +88,41 @@ label{
     gap: 10%;
     padding-bottom: 2vh;
 }
+
+.head{
+    display: flex;
+    justify-content: flex-start;
+    gap: 10vw;
+}
+.filters{
+    display: flex;
+    gap: 10vw;
+    align-items: center;
+}
+.emp_filter, .sch_filter {
+    color: white;
+    font-size: 20px;
+}
+.headers{
+    font-size: 32px;
+    color: #ffffff;
+    font-weight: 600;
+}
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+}
+
+.apply{
+    height: 30%;
+    width: 7vw;
+    font-size: 20px;
+    border-radius: 20px;
+}
+select{
+    border-radius: 5px;
+    height: 4vh;
+    width: 100%;
+    font-size: 20px;
+}
