@@ -26,15 +26,15 @@ def get_vacancies(
     res = json.loads(res.text)
     areas = {'Россия': 113}
     if city:
-        for area in res[0]['areas']:
-            areas[area['name']] = area['id']
-            if area['areas']:
-                cur_area = area['areas']
-                for cur_city in cur_area:
-                    areas[cur_city['name']] = cur_city['id']
-        for key, value in areas.items():
-            if str(city).lower() == key.lower():
-                city = areas[key]
+            for area in res[0]['areas']:
+                areas[area['name']] = area['id']
+                if area['areas']:
+                    cur_area = area['areas']
+                    for cur_city in cur_area:
+                        areas[cur_city['name']] = cur_city['id']
+            for key, value in areas.items():
+                if str(city).lower() == key.lower():
+                    city = areas[key]
 
     url = 'https://api.hh.ru/vacancies'
     params = {
@@ -43,9 +43,12 @@ def get_vacancies(
         'salary': salary,
         'per_page': 100
     }
-    response = requests.get(url, params=params)
-    response.raise_for_status()
-    response = json.loads(response.text)
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        response = json.loads(response.text)
+    except:
+        return {'ok': False}
     vacancies = []
     for page in range(response['pages']):
         params = {
@@ -62,7 +65,7 @@ def get_vacancies(
         vacancies += response['items']
         time.sleep(1)
     out_vacancies = []
-    c=0
+    c = 0
     for item in vacancies:
         out_vacancy = {}
         item_id = item['id']
@@ -144,7 +147,9 @@ def get_vacancies_from_db(
         city: str = 'Россия',
         salary: str = None
 ):
-    get_vacancies(vacancy, city, salary)
+    responce = get_vacancies(vacancy, city, salary)
+    if not responce['ok']:
+        return {'ok': False}
     with session_factory() as session:
         vacancies = session.query(VacanciesTable).all()
         out_vacancies = []
@@ -162,7 +167,7 @@ def get_vacancies_from_db(
             vacancy_dict['url'] = vacancy.url
             out_vacancies.append(vacancy_dict)
 
-        return {'vacancies': out_vacancies}
+        return {'ok': True, 'vacancies': out_vacancies}
 
 
 @app.get('/filter')

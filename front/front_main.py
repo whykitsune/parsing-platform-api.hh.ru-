@@ -43,6 +43,9 @@ def vacancies(
     if path == 'base':
         parsed_vacancies = requests.get('http://127.0.0.1:9000/get_vacancies', params=params)
         parsed_vacancies = parsed_vacancies.json()
+        if not parsed_vacancies['ok']:
+            return templates.TemplateResponse('vacancies.html', {'request': request,
+                                                                 'ok': False})
         parsed_vacancies = parsed_vacancies['vacancies']
         if len(parsed_vacancies) // 20 == 0:
             count_of_pages = len(parsed_vacancies) // 20
@@ -65,10 +68,8 @@ def vacancies(
             'employment': employment,
             'schedule': schedule
         }
-        print(experience, employment, schedule)
         filtered_vacancies = requests.get('http://127.0.0.1:9000/filter', params=filters)
         filtered_vacancies = filtered_vacancies.json()
-        print(filtered_vacancies)
         filtered_vacancies = filtered_vacancies['vacancies']
         if len(filtered_vacancies) // 20 == 0:
             count_of_pages = len(filtered_vacancies) // 20
@@ -80,4 +81,5 @@ def vacancies(
     return templates.TemplateResponse('vacancies.html', {'request': request,
                                                          'vacancies_all': vacancies_all,
                                                          'cur_page': cur_page,
-                                                         'count_of_pages': count_of_pages})
+                                                         'count_of_pages': count_of_pages,
+                                                         'ok': True})
