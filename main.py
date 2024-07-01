@@ -20,10 +20,13 @@ def get_vacancies(
         salary: str = None
 ):
     create_tables()
-    url_areas = 'https://api.hh.ru/areas'
-    res = requests.get(url_areas)
-    res.raise_for_status()
-    res = json.loads(res.text)
+    try:
+        url_areas = 'https://api.hh.ru/areas'
+        res = requests.get(url_areas)
+        res.raise_for_status()
+        res = json.loads(res.text)
+    except:
+        return {'ok': False}
     areas = {'Россия': 113}
     if city:
             for area in res[0]['areas']:
@@ -59,9 +62,12 @@ def get_vacancies(
             'page': page
         }
 
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        response = json.loads(response.text)
+        try:
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            response = json.loads(response.text)
+        except:
+            return {'ok': False}
         vacancies += response['items']
         time.sleep(1)
     out_vacancies = []
@@ -70,9 +76,12 @@ def get_vacancies(
         out_vacancy = {}
         item_id = item['id']
         url_vacancy = f'https://api.hh.ru/vacancies/{item_id}'
-        response_vacancy = requests.get(url_vacancy)
-        response_vacancy.raise_for_status()
-        response_vacancy = json.loads(response_vacancy.text)
+        try:
+            response_vacancy = requests.get(url_vacancy)
+            response_vacancy.raise_for_status()
+            response_vacancy = json.loads(response_vacancy.text)
+        except:
+            return {'ok': False}
         out_vacancy['name'] = response_vacancy['name']
         out_vac_salary = ''
         if response_vacancy['salary']:
@@ -147,8 +156,8 @@ def get_vacancies_from_db(
         city: str = 'Россия',
         salary: str = None
 ):
-    responce = get_vacancies(vacancy, city, salary)
-    if not responce['ok']:
+    response = get_vacancies(vacancy, city, salary)
+    if not response['ok']:
         return {'ok': False}
     with session_factory() as session:
         vacancies = session.query(VacanciesTable).all()
