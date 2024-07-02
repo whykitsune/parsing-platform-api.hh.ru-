@@ -41,7 +41,7 @@ def vacancies(
     global count_of_pages, cur_page, vacancies_all
 
     if path == 'base':
-        parsed_vacancies = requests.get('http://127.0.0.1:9000/get_vacancies', params=params)
+        parsed_vacancies = requests.get('http://backend:9000/get_vacancies', params=params)
         parsed_vacancies = parsed_vacancies.json()
         if not parsed_vacancies['ok']:
             return templates.TemplateResponse('vacancies.html', {'request': request,
@@ -68,7 +68,7 @@ def vacancies(
             'employment': employment,
             'schedule': schedule
         }
-        filtered_vacancies = requests.get('http://127.0.0.1:9000/filter', params=filters)
+        filtered_vacancies = requests.get('http://backend:9000/filter', params=filters)
         filtered_vacancies = filtered_vacancies.json()
         filtered_vacancies = filtered_vacancies['vacancies']
         if len(filtered_vacancies) // 20 == 0:

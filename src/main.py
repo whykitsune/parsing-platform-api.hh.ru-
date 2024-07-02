@@ -5,15 +5,14 @@ import requests
 import json
 import time
 import re
-from src.models import VacanciesTable
-from src.database import session_factory
-from src.query import create_tables
+from models import VacanciesTable
+from database import session_factory
+from query import create_tables
 
 
 app = FastAPI()
 
 
-# @app.get('/get_vacancy')
 def get_vacancies(
         vacancy: str = '',
         city: str = 'Россия',
@@ -215,7 +214,3 @@ def filter_vacancies(
             out_vacancies.append(vacancy_dict)
 
         return {'vacancies': out_vacancies}
-
-
-# print(get_vacancies(city='Кострома'))
-# print(get_vacancies_from_db())

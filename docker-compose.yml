@@ -12,3 +12,23 @@ services:
       - ./data:/data
     ports:
       - 5432:5432
+
+  backend:
+    build:
+      context: src/
+    container_name: backend
+    env_file:
+      - .env
+    ports:
+      - 9000:9000
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: front/
+    container_name: frontend
+    ports:
+      - 8000:8000
+    depends_on:
+      - backend

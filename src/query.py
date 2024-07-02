@@ -1,4 +1,4 @@
-from src.database import engine, Base
+from database import engine, Base
 
 
 def create_tables():
