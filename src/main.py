@@ -70,7 +70,7 @@ def get_vacancies(
         vacancies += response['items']
         time.sleep(1)
     out_vacancies = []
-    c = 0
+    c = 0   # счетчик количества вакансий (чтобы ограничить количество получаемых вакансий)
     for item in vacancies:
         out_vacancy = {}
         item_id = item['id']
@@ -125,8 +125,8 @@ def get_vacancies(
         out_vacancy['url'] = response_vacancy['alternate_url']
         out_vacancies.append(out_vacancy)
         c += 1
-        if c == 30:
-            break
+        if c == 30:   # при найденных 30 вакансиях заканчиваем парсить (парсинг большего количества просто увеличит
+            break     # время работы и никак не повлияет на функционал платформы)
 
     with session_factory() as session:
         for cur_vacancy in out_vacancies:
